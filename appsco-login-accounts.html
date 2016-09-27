@@ -1,0 +1,273 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../paper-card/paper-card.html">
+<link rel="import" href="../paper-button/paper-button.html">
+
+<link rel="import" href="../neon-animation/neon-animatable-behavior.html">
+<link rel="import" href="../neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="../neon-animation/animations/slide-left-animation.html">
+
+<link rel="import" href="../iron-localstorage/iron-localstorage.html">
+
+<link rel="import" href="appsco-login-account.html">
+
+<!--
+`appsco-login-accounts`
+Appsco login accounts component
+
+@demo demo/appsco-login-accounts.html
+-->
+
+<dom-module id="appsco-login-accounts">
+    <template>
+        <style include="iron-flex iron-flex-alignment">
+            :host {
+                display: block;
+                max-width: 400px;
+
+                @apply(--appsco-login-accounts);
+            }
+            :host .card-content-no-padding {
+                padding-left: 0;
+                padding-right: 0;
+            }
+            :host paper-button {
+                margin-left: 0;
+                margin-right: 0;
+                color: #ffffff;
+                border-radius: 0;
+            }
+            :host .btn-primary {
+                background-color: var(--primary-color, #03BCFF);
+
+            }
+            :host .btn-danger {
+                background-color: var(--danger-color, #ff0000);
+            }
+            :host paper-button[toggles][active] {
+                @apply(--shadow-elevation-4dp);
+            }
+        </style>
+
+        <paper-card heading="Your accounts" class="layout vertical">
+
+            <div class="card-content">
+                <content id="headerContent" select="[ header ]"></content>
+            </div>
+
+            <div class="card-content card-content-no-padding layout vertical">
+                <template is="dom-repeat" items="{{ _accounts }}">
+
+                    <appsco-login-account
+                            account="{{ item }}"
+                            remove-account="[[ _removeAccount ]]"
+                            on-account-selected="_onAccountSelected">
+                    </appsco-login-account>
+
+                </template>
+            </div>
+
+            <div class="card-content layout vertical">
+
+                <div class="actions layout horizontal">
+                    <paper-button class="flex btn-primary"
+                                  on-tap="_onAddAccount">
+                        Add account
+                    </paper-button>
+
+                    <paper-button
+                            id="actionRemoveAccount"
+                            class="flex btn-danger"
+                            on-tap="_onRemoveAccount"
+                            toggles>
+                        Remove account
+                    </paper-button>
+                </div>
+
+                <content select="[ footer ]"></content>
+            </div>
+
+        </paper-card>
+
+        <iron-localstorage
+                id="localStorageAccounts"
+                name="appsco-accounts"
+                value="{{ _accounts }}">
+        </iron-localstorage>
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'appsco-login-accounts',
+
+            properties: {
+
+                /**
+                 * Synced Accounts from local storage.
+                 */
+                _accounts: {
+                    type: Array
+                },
+
+                /**
+                 * Selected account from account list.
+                 */
+                selectedAccount: {
+                    type: Object,
+                    notify: true
+                },
+
+                /**
+                 * Indicates if user wants to perform removing accounts.
+                 */
+                _removeAccount: {
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
+                 * Animation configuration for root element.
+                 */
+                animationConfig: {
+                    value: function() {
+                        return {
+                            'entry': {
+                                name: 'slide-from-left-animation',
+                                node: this,
+                                timing: {
+                                    duration: 200
+                                }
+                            },
+                            'exit': {
+                                name: 'slide-left-animation',
+                                node: this,
+                                timing: {
+                                    duration: 200
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            behaviors: [
+                Polymer.NeonAnimatableBehavior
+            ],
+
+            ready: function() {
+                this._setHeaderContentStyle();
+            },
+
+            /**
+             * Checks if header content is empty.
+             * Hides it if it is empty.
+             *
+             * @private
+             */
+            _setHeaderContentStyle: function() {
+                var header = Polymer.dom(this.$.headerContent),
+                    nodes = header.getDistributedNodes();
+
+                if (nodes.length > 0) {
+                    nodes.forEach(function(el, i) {
+
+                        if (!Polymer.dom(el).firstChild) {
+                            header.parentNode.hidden = true;
+                        }
+
+                    }.bind(this));
+                }
+                else {
+                    header.parentNode.hidden = true;
+                }
+            },
+
+            /**
+             * Called after account is selected by user.
+             * It invites appropriate method depending if user wants to remove account from storage or to login with selected account.
+             * @param {Object} event
+             *
+             * @private
+             */
+            _onAccountSelected: function(event) {
+                this.selectedAccount = event.model.item;
+
+                if (this._removeAccount) {
+                    this._removeAccountFromStorage();
+                }
+                else {
+                    this._showAccountLogin();
+                }
+
+            },
+
+            /**
+             * Removes previously selected account from local storage.
+             * If there are no accounts in storage it fires event.
+             *
+             * @private
+             */
+            _removeAccountFromStorage: function() {
+                var index = this._accounts.indexOf(this.selectedAccount);
+
+                this.splice('_accounts', index, 1);
+
+                if (this._accounts.length === 0) {
+                    this._removeAccount = false;
+                    this.$.actionRemoveAccount.active = false;
+
+                    /**
+                     * Fired after account removing if there are no accounts left in storage.
+                     *
+                     * @event storage-empty
+                     */
+                    this.fire('storage-empty');
+                }
+            },
+
+            /**
+             * Shows account login form for selected account.
+             * Fires an event.
+             *
+             * @private
+             */
+            _showAccountLogin: function() {
+
+                /**
+                 * Fired when user selects an account.
+                 *
+                 * @event account-login
+                 */
+                this.fire('account-login');
+            },
+
+            /**
+             * Called when user taps on new account action.
+             * Fires an event.
+             *
+             * @private
+             */
+            _onAddAccount: function() {
+
+                /**
+                 * Fired when user taps on new account action.
+                 *
+                 * @event add-account
+                 */
+                this.fire('add-account');
+            },
+
+            /**
+             * Called when user taps on remove account action.
+             * It toggles removing mode.
+             *
+             * @private
+             */
+            _onRemoveAccount: function() {
+                this._removeAccount = !this._removeAccount;
+            }
+        });
+    </script>
+</dom-module>
