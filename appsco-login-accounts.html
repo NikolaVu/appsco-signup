@@ -2,11 +2,11 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../paper-card/paper-card.html">
 <link rel="import" href="../paper-button/paper-button.html">
-
 <link rel="import" href="../neon-animation/neon-animatable-behavior.html">
 <link rel="import" href="../neon-animation/animations/slide-from-left-animation.html">
 <link rel="import" href="../neon-animation/animations/slide-left-animation.html">
-
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="../iron-localstorage/iron-localstorage.html">
 
 <link rel="import" href="appsco-login-account.html">
@@ -14,6 +14,17 @@
 <!--
 `appsco-login-accounts`
 Appsco login accounts component
+
+Example:
+
+    <body>
+      <appsco-login-accounts></appsco-login-accounts>
+
+ Custom property | Description | Default
+----------------|-------------|----------
+`--primary-color` | Used for button background color | `Based on Polymer's default theme --primary-color`
+`--danger-color` | Used for remove button background color | `#ff0000`
+`--appsco-login-accounts` | Mixin applied to root element | `{}`
 
 @demo demo/appsco-login-accounts.html
 -->
@@ -24,12 +35,12 @@ Appsco login accounts component
             :host {
                 display: block;
                 max-width: 400px;
+                color: var(--primary-text-color);
 
                 @apply(--appsco-login-accounts);
             }
             :host .card-content-no-padding {
-                padding-left: 0;
-                padding-right: 0;
+                padding: 0;
             }
             :host paper-button {
                 margin-left: 0;
@@ -47,6 +58,9 @@ Appsco login accounts component
             :host paper-button[toggles][active] {
                 @apply(--shadow-elevation-4dp);
             }
+            :host p {
+                margin: 0 0 5px 0;
+            }
         </style>
 
         <paper-card heading="Your accounts" class="layout vertical">
@@ -59,6 +73,7 @@ Appsco login accounts component
                 <template is="dom-repeat" items="{{ _accounts }}">
 
                     <appsco-login-account
+                            id$="{{ _setLoginAccountId(index) }}"
                             account="{{ item }}"
                             remove-account="[[ _removeAccount ]]"
                             on-account-selected="_onAccountSelected">
@@ -66,6 +81,13 @@ Appsco login accounts component
 
                 </template>
             </div>
+
+            <template is="dom-if" if="[[ _emptyAccounts ]]">
+                <div class="card-content layout vertical">
+                    <p>You've removed all accounts.</p>
+                    <p>Please check 'Remember me' next time you log in.</p>
+                </div>
+            </template>
 
             <div class="card-content layout vertical">
 
@@ -112,11 +134,27 @@ Appsco login accounts component
                 },
 
                 /**
+                 * Indicates if there are no more accounts in storage.
+                 * It becomes 'true' after removing all accounts from list.
+                 */
+                _emptyAccounts: {
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
                  * Selected account from account list.
                  */
                 selectedAccount: {
                     type: Object,
                     notify: true
+                },
+
+                /**
+                 * Selected account from account list.
+                 */
+                _selectedAccountDOM: {
+                    type: String
                 },
 
                 /**
@@ -153,8 +191,13 @@ Appsco login accounts component
             },
 
             behaviors: [
-                Polymer.NeonAnimatableBehavior
+                    Polymer.NeonAnimatableBehavior,
+                    Polymer.NeonAnimationRunnerBehavior
             ],
+
+            listeners: {
+                'neon-animation-finish': '_onAnimationFinish'
+            },
 
             ready: function() {
                 this._setHeaderContentStyle();
@@ -185,6 +228,45 @@ Appsco login accounts component
             },
 
             /**
+             * Called while dom-repeat rendering.
+             * It sets 'id' attribute to dom-repeat item 'appsco-login-account'.
+             * @param {Number} index
+             *
+             * @private
+             */
+            _setLoginAccountId: function(index) {
+                return 'loginAccount_' + index;
+            },
+
+            /**
+             * Hides appsco-login-account element from DOM before it is removed from storage.
+             * @param {Number} index
+             *
+             * @private
+             */
+            _hideAccountFromDOM: function(index) {
+                var exitAnimation = Object.assign({}, this.animationConfig.exit);
+
+                this.animationConfig.exit.node = this.$$('#loginAccount_' + index);
+
+                this.playAnimation('exit');
+            },
+
+            /**
+             * It is called after login account animation is finished.
+             * It hides login account before it is removed from storage.
+             *
+             * @private
+             */
+            _onAnimationFinish: function() {
+                this._selectedAccountDOM.style.display = 'none';
+
+                this.animationConfig.exit.node = this;
+
+                this._removeAccountFromStorage();
+            },
+
+            /**
              * Called after account is selected by user.
              * It invites appropriate method depending if user wants to remove account from storage or to login with selected account.
              * @param {Object} event
@@ -193,9 +275,10 @@ Appsco login accounts component
              */
             _onAccountSelected: function(event) {
                 this.selectedAccount = event.model.item;
+                this._selectedAccountDOM = event.target;
 
                 if (this._removeAccount) {
-                    this._removeAccountFromStorage();
+                    this._hideAccountFromDOM(event.model.index);
                 }
                 else {
                     this._showAccountLogin();
@@ -205,7 +288,6 @@ Appsco login accounts component
 
             /**
              * Removes previously selected account from local storage.
-             * If there are no accounts in storage it fires event.
              *
              * @private
              */
@@ -215,15 +297,7 @@ Appsco login accounts component
                 this.splice('_accounts', index, 1);
 
                 if (this._accounts.length === 0) {
-                    this._removeAccount = false;
-                    this.$.actionRemoveAccount.active = false;
-
-                    /**
-                     * Fired after account removing if there are no accounts left in storage.
-                     *
-                     * @event storage-empty
-                     */
-                    this.fire('storage-empty');
+                    this._onEmptyStorage();
                 }
             },
 
@@ -267,6 +341,39 @@ Appsco login accounts component
              */
             _onRemoveAccount: function() {
                 this._removeAccount = !this._removeAccount;
+            },
+
+            /**
+             * Called after all accounts have been removed from storage.
+             * It fires event.
+             *
+             * @private
+             */
+            _onEmptyStorage: function() {
+                this._emptyAccounts = true;
+                this.$.actionRemoveAccount.hidden = true;
+
+                this.resetPage();
+
+                /**
+                 * Fired if there are no accounts left in storage.
+                 *
+                 * @event storage-empty
+                 */
+                this.fire('storage-empty');
+            },
+
+            /**
+             * It sets up the component.
+             */
+            setUpPage: function() {},
+
+            /**
+             * It resets the component.
+             */
+            resetPage: function() {
+                this._removeAccount = false;
+                this.$.actionRemoveAccount.active = false;
             }
         });
     </script>

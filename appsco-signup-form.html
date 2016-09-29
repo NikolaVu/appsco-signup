@@ -38,6 +38,7 @@ Example:
             :host {
                 display: block;
                 max-width: 400px;
+                color: var(--primary-text-color);
 
                 @apply(--appsco-signup-form);
             }
@@ -68,7 +69,7 @@ Example:
                       on-iron-form-response="_onFormResponse">
 
                     <gold-email-input
-                            id="username"
+                            id="usernameInput"
                             name="username"
                             label="email"
                             error-message="Please type correct email address."
@@ -80,7 +81,6 @@ Example:
                     <paper-input
                             type="password"
                             name="password"
-                            id="password"
                             label="password"
                             required>
                     </paper-input>
@@ -150,14 +150,14 @@ Example:
                                 name: 'slide-from-right-animation',
                                 node: this,
                                 timing: {
-                                    duration: 300
+                                    duration: 200
                                 }
                             },
                             'exit': {
                                 name: 'slide-right-animation',
                                 node: this,
                                 timing: {
-                                    duration: 200
+                                    duration: 300
                                 }
                             }
                         }
@@ -186,7 +186,7 @@ Example:
             _validateInput: function(event) {
                 var input = event.target;
 
-                if (input.value != '') {
+                if (input.value.trim() != '') {
                     input.validate();
                 }
                 else {
@@ -249,6 +249,21 @@ Example:
              */
             _onEnter: function() {
                 this._onFormSubmit();
+            },
+
+            /**
+             * It sets up the component.
+             */
+            setUpPage: function() {
+                this.$.usernameInput.focus();
+            },
+
+            /**
+             * It resets the component.
+             */
+            resetPage: function() {
+                this.$.appscoSignupForm.reset();
+                this._error = '';
             }
         });
     </script>

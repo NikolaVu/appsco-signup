@@ -6,10 +6,20 @@
 
 <!--
 `appsco-form-error`
-Appsco brand component
+Appsco form error component
+
+Example:
+
+    <body>
+      <appsco-forgot-password></appsco-forgot-password>
+
+ Custom property | Description | Default
+----------------|-------------|----------
+`--form-error-background-color` | Background color of error box | `{#ffefef}`
+`--form-error-text-color` | Text color of error box | `{#ff0000}`
+`--form-error-box` | Mixin applied to error box element | `{}`
 
 @demo demo/appsco-form-error.html
-@demo demo/index.html - complete demo for all elements.
 -->
 
 <dom-module id="form-error">
@@ -30,7 +40,7 @@ Appsco brand component
         </style>
 
         <div class="box">
-            [[ _message ]]
+            [[ message ]]
         </div>
 
     </template>
@@ -41,23 +51,27 @@ Appsco brand component
             is: 'form-error',
 
             properties: {
+
+                /**
+                 * Indicates if error exists.
+                 */
                 _error: {
                     type: Boolean,
-                    value: false,
-                    reflectToAttribute: true
+                    computed: '_checkIfErrorExists(message)'
                 },
 
+                /**
+                 * Message to display in error box.
+                 */
                 message: {
                     type: String,
                     value: '',
                     notify: true
                 },
 
-                _message: {
-                    type: String,
-                    value: ''
-                },
-
+                /**
+                 * Animation configuration for root element.
+                 */
                 animationConfig: {
                     value: function() {
                         return {
@@ -85,36 +99,30 @@ Appsco brand component
             ],
 
             listeners: {
-                'message-changed': '__checkErrorMessage',
-                'neon-animation-finish': '__onNeonAnimationFinish'
+                'message-changed': '_onMessageChanged',
+                'neon-animation-finish': '_onNeonAnimationFinish'
             },
 
-            attached: function() {
-
-                this.__checkErrorMessage();
-
+            _checkIfErrorExists: function(message) {
+                return (message && message != '');
             },
 
-            __checkErrorMessage: function() {
-                var message = this.message;
+            _onMessageChanged: function() {
 
-                if (message && message != '') {
-                    this._message = message;
+                if (this._error) {
                     this.playAnimation('entry');
                     this.style.display = 'block';
-                    this._error = true;
                 }
                 else {
                     this.playAnimation('exit');
-                    this._error = false;
                 }
+
             },
 
-            __onNeonAnimationFinish: function() {
+            _onNeonAnimationFinish: function() {
 
                 if (!this._error) {
                     this.style.display = 'none';
-                    this._message = '';
                 }
 
             }

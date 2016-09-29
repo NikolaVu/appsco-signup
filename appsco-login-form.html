@@ -1,6 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../paper-styles/paper-styles.html">
 
 <link rel="import" href="../iron-form/iron-form.html">
 <link rel="import" href="../paper-card/paper-card.html">
@@ -20,7 +19,7 @@
 
 <link rel="import" href="appsco-form-error.html">
 <link rel="import" href="../appsco-header/appsco-loader.html">
-<link rel="import" href="appsco-login-with.html">
+<link rel="import" href="appsco-oauth.html">
 
 <!--
 `appsco-login-form`
@@ -44,6 +43,7 @@ Example:
             :host {
                 display: block;
                 max-width: 400px;
+                color: var(--primary-text-color);
 
                 --paper-checkbox-size: 14px;
 
@@ -55,7 +55,7 @@ Example:
             :host paper-button {
                 margin-top: 20px;
             }
-            :host appsco-login-with {
+            :host appsco-oauth {
                 margin-top: 30px;
             }
             :host .remember-me-section {
@@ -86,7 +86,7 @@ Example:
                       on-iron-form-response="_onFormResponse">
 
                     <gold-email-input
-                            id="username"
+                            id="usernameInput"
                             name="username"
                             label="email"
                             error-message="Please type correct email address."
@@ -126,9 +126,9 @@ Example:
                     </paper-button>
                 </form>
 
-                <appsco-login-with
-                        oauth-applications="[[ oauthApplications ]]">
-                </appsco-login-with>
+                <appsco-oauth
+                        providers="[[ providers ]]">
+                </appsco-oauth>
 
             </div>
 
@@ -184,7 +184,7 @@ Example:
                 /**
                  * Array of oauth applications with application name and oauth url.
                  */
-                oauthApplications: {
+                providers: {
                     type: Array,
                     value: [
                         {
@@ -226,7 +226,7 @@ Example:
                                 name: 'slide-from-left-animation',
                                 node: this,
                                 timing: {
-                                    duration: 300
+                                    duration: 200
                                 }
                             },
                             'exit': {
@@ -271,7 +271,7 @@ Example:
             _validateInput: function(event) {
                 var input = event.target;
 
-                if (input.value != '') {
+                if (input.value.trim() != '') {
                     input.validate();
                 }
                 else {
@@ -347,7 +347,7 @@ Example:
              * @private
              */
             _onPasswordForgotten: function() {
-                this.fire('show-forgot-password-form');
+                this.fire('forgot-password');
             },
 
             /**
@@ -392,6 +392,21 @@ Example:
                         this._accounts = [newAccount];
                     }
                 }
+            },
+
+            /**
+             * It sets up the component.
+             */
+            setUpPage: function() {
+                this.$.usernameInput.focus();
+            },
+
+            /**
+             * It resets the component.
+             */
+            resetPage: function() {
+                this.$.appscoLoginForm.reset();
+                this._error = '';
             }
         });
     </script>

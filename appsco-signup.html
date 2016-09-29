@@ -2,12 +2,15 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../neon-animation/neon-animated-pages.html">
 <link rel="import" href="../iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../paper-styles/paper-styles.html">
 
 <link rel="import" href="appsco-login-form.html">
 <link rel="import" href="appsco-login-2fa.html">
 <link rel="import" href="appsco-login-accounts.html">
 <link rel="import" href="appsco-login-account-login.html">
 <link rel="import" href="appsco-signup-form.html">
+<link rel="import" href="appsco-forgot-password.html">
+<link rel="import" href="appsco-reset-password.html">
 
 <!--
 `appsco-signup`
@@ -21,6 +24,10 @@ Signup component is used to represent authentication methods to the user and pro
         <style>
             :host {
                 display: block;
+
+                --primary-text-color: #7e97b2;
+                --paper-card-header-color: var(--primary-text-color);
+
             }
             :host neon-animated-pages {
                 min-height: 550px;
@@ -41,6 +48,14 @@ Signup component is used to represent authentication methods to the user and pro
             .text-center {
                 text-align: center;
             }
+            .link {
+                padding: 0;
+                min-width: initial;
+                background-color: transparent;
+                font-size: inherit;
+                text-transform: uppercase;
+                font-weight: bold;
+            }
         </style>
 
         <neon-animated-pages class="flex"
@@ -51,16 +66,28 @@ Signup component is used to represent authentication methods to the user and pro
             <appsco-login-form
                     name="appsco-login-form"
                     class="login-page"
+                    on-forgot-password="_showForgotPasswordForm"
                     on-iron-form-response="_onAppscoLoginFormResponse"
                     on-iron-form-error="_onAppscoLoginFormResponse">
 
                 <div header></div>
 
                 <div footer>
-                    <div class="mt-50 text-center">
-                        Don't have account?
-                        <paper-button class="link primary" on-tap="_showSignupForm">Sign up</paper-button>
-                    </div>
+
+                    <template is="dom-if" if="[[ _accountsExist ]]">
+                        <div class="mt-50 text-center">
+                            <paper-button class="link primary" on-tap="_showLoginAccounts">Back</paper-button>
+                            to accounts
+                        </div>
+                    </template>
+
+                    <template is="dom-if" if="[[ !_accountsExist ]]">
+                        <div class="mt-50 text-center">
+                            Don't have account?
+                            <paper-button class="link primary" on-tap="_showSignupForm">Sign up</paper-button>
+                        </div>
+                    </template>
+
                 </div>
 
             </appsco-login-form>
@@ -81,11 +108,12 @@ Signup component is used to represent authentication methods to the user and pro
             </appsco-login-2fa>
 
             <appsco-login-accounts
+                    id="appscoLoginAccountsPage"
                     name="appsco-login-accounts"
                     class="login-page"
                     selected-account="{{ _selectedAccount }}"
-                    on-add-account="_showLoginForm"
-                    on-storage-empty="_showLoginForm"
+                    on-add-account="_onAddAccount"
+                    on-storage-empty="_onStorageEmpty"
                     on-account-login="_showAccountLoginForm">
 
                 <div header></div>
@@ -126,7 +154,7 @@ Signup component is used to represent authentication methods to the user and pro
                         Appsco for free, no need for e-mail confirmation.
                     </div>
 
-                    <div class="additional-info-section text-center mt-50">
+                    <div class="text-center mt-50">
                         Already have account?
                         <paper-button class="link primary" on-tap="_showLoginPage">Login</paper-button>
                     </div>
@@ -134,144 +162,34 @@ Signup component is used to represent authentication methods to the user and pro
 
             </appsco-signup-form>
 
-            <!--<appsco-login-form-->
-                    <!--id="appscoLoginForm"-->
-                    <!--name="login-form"-->
-                    <!--method="get"-->
-                    <!--action="http://appsco.loc/app_dev.php/api/v2/me"-->
-                    <!--title="Login"-->
-                    <!--action-name="Login"-->
-                    <!--remember-me="{{ _rememberMe }}"-->
-                    <!--facebook-login="/facebook"-->
-                    <!--google-login="/google"-->
-                    <!--on-show-reset-password-form="__showResetPasswordForm"-->
-                    <!--on-iron-form-error="__handleLoginFormResponse"-->
-                    <!--on-iron-form-response="__handleLoginFormResponse">-->
+            <appsco-forgot-password
+                    name="appsco-forgot-password"
+                    class="login-page">
 
-                <!--<div class="content-info"></div>-->
+                <div header>
+                    Enter your email address and we'll send you a mail message with password reset link.
+                </div>
 
-                <!--<div class="content-additional-info">-->
-                    <!--<div class="additional-info-section text-center mt-50">-->
-                        <!--<template is="dom-if" if="[[ _hasAccounts ]]">-->
-                            <!--<paper-button class="link primary" on-tap="__backToAccounts">Back</paper-button>-->
-                            <!--to accounts-->
-                        <!--</template>-->
+                <div footer>
+                    <div class="text-center mt-50">
+                        Back to
+                        <paper-button class="link primary" on-tap="_showLoginPage">Login</paper-button>
+                    </div>
+                </div>
 
-                        <!--<template is="dom-if" if="[[ !_hasAccounts ]]">-->
-                            <!--Don't have account?-->
-                            <!--<paper-button class="link primary" on-tap="__showSignupForm">Sign up</paper-button>-->
-                        <!--</template>-->
-                    <!--</div>-->
-                <!--</div>-->
+            </appsco-forgot-password>
 
-            <!--</appsco-login-form>-->
+            <appsco-reset-password
+                    name="appsco-reset-password"
+                    class="login-page">
 
-            <!--<appsco-accounts-->
-                    <!--id="accounts"-->
-                    <!--name="account-list"-->
-                    <!--title="Your accounts"-->
-                    <!--accounts="[[ accounts ]]"-->
-                    <!--remove-account="[[ _removeAccount ]]"-->
-                    <!--on-account-chosen="__showAccountLogin"-->
-                    <!--on-remove-account="__removeAccountFromLocaleStorage"-->
-                    <!--on-tap="__handleAccountsTap">-->
+                <div header>
+                    Enter your new password.
+                </div>
 
-                <!--<div class="actions layout horizontal">-->
-                    <!--<paper-button class="flex account btn-primary"-->
-                                  <!--on-tap="__addNewAccount">-->
-                        <!--Add account-->
-                    <!--</paper-button>-->
+                <div footer></div>
 
-                    <!--<paper-button-->
-                            <!--id="actionRemoveAccount"-->
-                            <!--class="flex account btn-danger"-->
-                            <!--on-tap="__accountRemoval"-->
-                            <!--toggles>-->
-                        <!--Remove account-->
-                    <!--</paper-button>-->
-                <!--</div>-->
-
-                <!--<div class="additional-info-section text-center mt-50">-->
-                    <!--Want to create another account?-->
-                    <!--<paper-button class="link primary" on-tap="__showSignupForm">Sign up</paper-button>-->
-                <!--</div>-->
-            <!--</appsco-accounts>-->
-
-            <!--<appsco-account-login-->
-                    <!--name="account-login"-->
-                    <!--method="post"-->
-                    <!--action="/account-login"-->
-                    <!--title="Account login"-->
-                    <!--action-name="Login"-->
-                    <!--account="{{ _selectedAccount }}"-->
-                    <!--on-account-login-cancel="__cancelAccountLoginForm"-->
-                    <!--on-iron-form-error="__handleAccountLoginFormResponse"-->
-                    <!--on-iron-form-response="__handleAccountLoginFormResponse">-->
-            <!--</appsco-account-login>-->
-
-            <!--<appsco-two-factor-auth-form-->
-                    <!--id="appscoTwoFactorAuthForm"-->
-                    <!--name="two-factor-auth-form"-->
-                    <!--method="post"-->
-                    <!--action="/two-factor-authentication"-->
-                    <!--title="Two-factor Authentication"-->
-                    <!--action-name="Submit"-->
-                    <!--on-iron-form-response="__handleTwoFactorAuthFormResponse">-->
-
-                <!--<div class="content-info"></div>-->
-
-                <!--<div class="content-additional-info additional-info-section text-center mt-50">-->
-                    <!--Back to-->
-                    <!--<paper-button class="link primary" on-tap="__resolveLogin">Login</paper-button>-->
-                <!--</div>-->
-
-            <!--</appsco-two-factor-auth-form>-->
-
-            <!--<appsco-signup-form-->
-                    <!--name="signup-form"-->
-                    <!--method="post"-->
-                    <!--action="/signup"-->
-                    <!--title="Signup for free"-->
-                    <!--action-name="Sign up"-->
-                    <!--on-iron-form-response="__handleSignupFormResponse">-->
-
-                <!--<div class="content-info"></div>-->
-
-                <!--<div class="content-additional-info">-->
-                    <!--<div class="mt-30">-->
-                        <!--By registering, you agree to the-->
-                        <!--<a href="#">privacy policy</a> and-->
-                        <!--<a href="#">terms of service</a>.-->
-                        <!--Just enter your e-mail and password and start using-->
-                        <!--Appsco for free, no need for e-mail confirmation.-->
-                    <!--</div>-->
-
-                    <!--<div class="additional-info-section text-center mt-50">-->
-                        <!--Already have account?-->
-                        <!--<paper-button class="link primary" on-tap="__resolveLogin">Login</paper-button>-->
-                    <!--</div>-->
-                <!--</div>-->
-
-            <!--</appsco-signup-form>-->
-
-            <!--<appsco-reset-password-form-->
-                    <!--name="reset-password-form"-->
-                    <!--method="post"-->
-                    <!--action="/reset-password"-->
-                    <!--title="Reset Password"-->
-                    <!--action-name="Reset"-->
-                    <!--on-iron-form-response="__handleResetPasswordFormResponse">-->
-
-                <!--<div class="content-info">-->
-                    <!--Enter your email address and we'll send you a mail message with password reset link.-->
-                <!--</div>-->
-
-                <!--<div class="content-additional-info additional-info-section text-center mt-50">-->
-                    <!--Back to-->
-                    <!--<paper-button class="link primary" on-tap="__resolveLogin">Login</paper-button>-->
-                <!--</div>-->
-
-            <!--</appsco-reset-password-form>-->
+            </appsco-reset-password>
 
         </neon-animated-pages>
 
@@ -291,6 +209,14 @@ Signup component is used to represent authentication methods to the user and pro
             properties: {
 
                 /**
+                 * Locale
+                 */
+                locale: {
+                    type: String,
+                    value: 'en'
+                },
+
+                /**
                  * Selected signup component.
                  * It has value of component's 'name' attribute.
                  */
@@ -306,6 +232,14 @@ Signup component is used to represent authentication methods to the user and pro
                 },
 
                 /**
+                 * Indicates if there are accounts in storage.
+                 */
+                _accountsExist: {
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
                  * Selected account.
                  */
                 _selectedAccount: {
@@ -318,7 +252,7 @@ Signup component is used to represent authentication methods to the user and pro
             },
 
             /**
-             * It sets selected page to Appsco Login Form.
+             * Sets selected page to Appsco Login Form.
              *
              * @private
              */
@@ -381,36 +315,33 @@ Signup component is used to represent authentication methods to the user and pro
             },
 
             /**
-             * Resets the previous visible form.
-             * @param {HTMLElement} fromPage
+             * It sets selected page to Appsco Forgot Password.
              *
              * @private
              */
-            _resetForm: function(fromPage) {
-                var form = fromPage.querySelector('form');
-
-                if (form) {
-                    form.reset();
-                }
-
-                // Remove error from form.
-                if (fromPage._error) {
-                    fromPage._error = '';
-                }
+            _showForgotPasswordForm: function() {
+                this._selected = 'appsco-forgot-password';
             },
 
             /**
-             * Focuses first input field inside form.
-             * @param {HTMLElement} toPage
+             * Called if user came from appsco-login-accounts page
+             * and wants to add new account to storage.
              *
              * @private
              */
-            _focusInputField: function(toPage) {
-                var inputToFocus = toPage.querySelector('[auto-focus]');
+            _onAddAccount: function() {
+                this._accountsExist = true;
+                this._showLoginForm();
+            },
 
-                if (inputToFocus) {
-                    inputToFocus.focus();
-                }
+            /**
+             * Called after user removed all accounts from storage.
+             *
+             * @private
+             */
+            _onStorageEmpty: function() {
+                this._accountsExist = false;
+                this._showLoginForm();
             },
 
             /**
@@ -420,8 +351,8 @@ Signup component is used to represent authentication methods to the user and pro
              * @private
              */
             _onNeonAnimationFinish: function(event) {
-                this._resetForm(event.detail.fromPage);
-                this._focusInputField(event.detail.toPage);
+                event.detail.fromPage.resetPage();
+                event.detail.toPage.setUpPage();
             },
 
             /**
@@ -431,7 +362,8 @@ Signup component is used to represent authentication methods to the user and pro
              * @private
              */
             _onAppscoLoginFormResponse: function(event) {
-
+//                var responseHeaders = event.detail.xhr.getAllResponseHeaders();
+//
 //                if (event.detail.response.twoFactorenabled) {
 //                    this._showLogin2fa();
 //                }

@@ -7,6 +7,20 @@
 `appsco-login-account`
 Appsco login account component
 
+Example:
+
+    <body>
+      <appsco-login-account></appsco-login-account>
+
+ Custom property | Description | Default
+----------------|-------------|----------
+`--divider-color` | Color for divider used for border of appsco-login-account | `Based on default theme --border-color`
+`--appsco-login-account` | Mixin applied to root element | `{}`
+`--appsco-account` | Mixin applied to inner element with class .account | `{}`
+`--appsco-account-img` | Mixin applied to inner <img> element that holds account picture | `{}`
+`--appsco-account-info-lead` | Mixin applied to inner element that holds account display name | `{}`
+`--appsco-account-info-additional` | Mixin applied to inner element that holds account email | `{}`
+
 @demo demo/appsco-login-account.html
 -->
 
@@ -15,7 +29,7 @@ Appsco login account component
         <style include="iron-flex iron-flex-alignment">
             :host {
                 display: block;
-                background-color: var(--primary-background-color);
+                color: var(--primary-text-color);
                 border-bottom: 1px solid var(--divider-color);
                 min-height: 68px;
                 position: relative;
@@ -24,8 +38,6 @@ Appsco login account component
             }
             :host:first-child {
                 border-top: 1px solid var(--divider-color);
-
-                @apply(--appsco-account-first-child);
             }
             :host .account {
                 padding: 10px 20px;
@@ -58,8 +70,7 @@ Appsco login account component
                 @apply(--appsco-account-info-lead);
             }
             :host .account .info-additional {
-                color: var(--text-color);
-                font-size: var(--font-size-small);
+                font-size: 12px;
                 margin: 0;
                 padding: 0;
                 height: 100%;
@@ -95,7 +106,7 @@ Appsco login account component
             }
         </style>
 
-        <div class="account layout horizontal" on-tap="_onAccountTap">
+        <div class="account layout horizontal">
 
             <img src="[[ account.picture_url ]]" class="account-img">
 
@@ -158,6 +169,10 @@ Appsco login account component
                     value: false,
                     reflectToAttribute: true
                 }
+            },
+
+            listeners: {
+                'tap': '_onAccountTap'
             },
 
             /**

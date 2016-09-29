@@ -5,24 +5,40 @@
 <link rel="import" href="../iron-icons/social-icons.html">
 
 <!--
-`appsco-login-with`
-Login with component
+`appsco-oauth`
+Is used to represent applications for oauth login within Appsco.
 
-@demo demo/appsco-login-with.html
-@demo demo/index.html - complete demo for all elements.
+Example:
+
+    <body>
+      <appsco-oauth providers="[{}]"></appsco-oauth>
+
+ Custom property | Description | Default
+----------------|-------------|----------
+`--appsco-oauth` | Mixin applied to root appsco-oauth element | `{}`
+
+@demo demo/appsco-oauth.html
 -->
 
-<dom-module id="appsco-login-with">
+<dom-module id="appsco-oauth">
     <template>
         <style include="iron-flex iron-flex-alignment">
             :host {
                 display: block;
-                @apply(--paper-font-common-base);
+                color: var(--primary-text-color);
+
+                @apply(--appsco-oauth);
+            }
+            :host .paper-button-link {
+                width: 50%;
             }
             :host paper-button {
-                width: 150px;
+                width: 100%;
                 background-color: var(--primary-color, #03BCFF);
                 color: #ffffff;
+                border-radius: 0;
+                margin-left: 0;
+                margin-right: 0;
             }
             :host a {
                 text-decoration: none;
@@ -76,9 +92,9 @@ Login with component
 
             <div class="login-links layout horizontal wrap flex-equal-justified mt-20">
 
-                <template is="dom-repeat" items="[[ oauthApplications ]]">
+                <template is="dom-repeat" items="[[ providers ]]">
 
-                    <a href="[[ item.oauth_url ]]">
+                    <a href="[[ item.oauth_url ]]" class="paper-button-link">
                         <paper-button class$="[[ item.name ]]">
                             [[ item.name ]]
                         </paper-button>
@@ -95,14 +111,14 @@ Login with component
     <script>
         Polymer({
 
-            is: 'appsco-login-with',
+            is: 'appsco-oauth',
 
             properties: {
 
                 /**
                  * Array of oauth applications with application name and oauth url.
                  */
-                oauthApplications: {
+                providers: {
                     type: Array
                 }
             }
