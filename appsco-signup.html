@@ -2,8 +2,8 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../neon-animation/neon-animated-pages.html">
 <link rel="import" href="../iron-localstorage/iron-localstorage.html">
-<link rel="import" href="../paper-styles/paper-styles.html">
 
+<link rel="import" href="../appsco-header/appsco-brand.html">
 <link rel="import" href="appsco-login-form.html">
 <link rel="import" href="appsco-login-2fa.html">
 <link rel="import" href="appsco-login-accounts.html">
@@ -24,13 +24,9 @@ Signup component is used to represent authentication methods to the user and pro
         <style>
             :host {
                 display: block;
-
-                --primary-text-color: #7e97b2;
-                --paper-card-header-color: var(--primary-text-color);
-
             }
             :host neon-animated-pages {
-                min-height: 550px;
+                height: 100%;
                 overflow: hidden;
             }
             :host .login-page {
@@ -39,24 +35,30 @@ Signup component is used to represent authentication methods to the user and pro
             .mt-30 {
                 margin-top: 30px;
             }
-            .mt-50 {
-                margin-top: 50px;
-            }
-            .mb-20 {
-                margin-bottom: 20px;
-            }
             .text-center {
                 text-align: center;
             }
-            .link {
-                padding: 0;
-                min-width: initial;
-                background-color: transparent;
-                font-size: inherit;
-                text-transform: uppercase;
-                font-weight: bold;
+            :host appsco-brand {
+                --appsco-brand: {
+                     width: 64px;
+                     margin: 0 auto 40px;
+                     display: block;
+                 };
+                --appsco-brand-logo: {
+                     margin-right: 0;
+                 };
             }
         </style>
+
+        <appsco-brand
+                logo="https://appsco.com/bundles/appscodashboardapproot/img/appsco-logo.png"
+                logo-width="64"
+                logo-height="64">
+
+            <div brand-info>
+            </div>
+
+        </appsco-brand>
 
         <neon-animated-pages class="flex"
                              selected="{{ _selected }}"
@@ -64,8 +66,10 @@ Signup component is used to represent authentication methods to the user and pro
                              on-neon-animation-finish="_onNeonAnimationFinish">
 
             <appsco-login-form
+                    id="appscoLoginForm"
                     name="appsco-login-form"
                     class="login-page"
+                    locale="[[ locale ]]"
                     on-forgot-password="_showForgotPasswordForm"
                     on-iron-form-response="_onAppscoLoginFormResponse"
                     on-iron-form-error="_onAppscoLoginFormResponse">
@@ -75,16 +79,16 @@ Signup component is used to represent authentication methods to the user and pro
                 <div footer>
 
                     <template is="dom-if" if="[[ _accountsExist ]]">
-                        <div class="mt-50 text-center">
-                            <paper-button class="link primary" on-tap="_showLoginAccounts">Back</paper-button>
+                        <div class="mt-30 text-center">
+                            <paper-button class="link-btn primary" on-tap="_showLoginAccounts">Back</paper-button>
                             to accounts
                         </div>
                     </template>
 
                     <template is="dom-if" if="[[ !_accountsExist ]]">
-                        <div class="mt-50 text-center">
+                        <div class="mt-30 text-center">
                             Don't have account?
-                            <paper-button class="link primary" on-tap="_showSignupForm">Sign up</paper-button>
+                            <paper-button class="link-btn primary" on-tap="_showSignupForm">Sign up</paper-button>
                         </div>
                     </template>
 
@@ -94,23 +98,24 @@ Signup component is used to represent authentication methods to the user and pro
 
             <appsco-login-2fa
                     name="appsco-login-2fa"
-                    class="login-page">
+                    class="login-page"
+                    locale="[[ locale ]]">
 
                 <div header></div>
 
                 <div footer>
-                    <div class="text-center mt-50">
+                    <div class="text-center mt-30">
                         Back to
-                        <paper-button class="link primary" on-tap="_showLoginPage">Login</paper-button>
+                        <paper-button class="link-btn primary" on-tap="_showLoginPage">Login</paper-button>
                     </div>
                 </div>
 
             </appsco-login-2fa>
 
             <appsco-login-accounts
-                    id="appscoLoginAccountsPage"
                     name="appsco-login-accounts"
                     class="login-page"
+                    locale="[[ locale ]]"
                     selected-account="{{ _selectedAccount }}"
                     on-add-account="_onAddAccount"
                     on-storage-empty="_onStorageEmpty"
@@ -119,9 +124,9 @@ Signup component is used to represent authentication methods to the user and pro
                 <div header></div>
 
                 <div footer>
-                    <div class="text-center mt-50">
+                    <div class="text-center mt-30">
                         Want to create another account?
-                        <paper-button class="link primary" on-tap="_showSignupForm">Sign up</paper-button>
+                        <paper-button class="link-btn primary" on-tap="_showSignupForm">Sign up</paper-button>
                     </div>
                 </div>
 
@@ -130,6 +135,7 @@ Signup component is used to represent authentication methods to the user and pro
             <appsco-login-account-login
                     name="appsco-login-account-login"
                     class="login-page"
+                    locale="[[ locale ]]"
                     account="[[ _selectedAccount ]]"
                     on-account-login-cancel="_showLoginPage">
 
@@ -141,12 +147,13 @@ Signup component is used to represent authentication methods to the user and pro
 
             <appsco-signup-form
                     name="appsco-signup-form"
-                    class="login-page">
+                    class="login-page"
+                    locale="[[ locale ]]">
 
                 <div header></div>
 
                 <div footer>
-                    <div class="mt-50 text-center">
+                    <div class="mt-30">
                         By registering, you agree to the
                         <a href="#">privacy policy</a> and
                         <a href="#">terms of service</a>.
@@ -154,9 +161,9 @@ Signup component is used to represent authentication methods to the user and pro
                         Appsco for free, no need for e-mail confirmation.
                     </div>
 
-                    <div class="text-center mt-50">
+                    <div class="text-center mt-30">
                         Already have account?
-                        <paper-button class="link primary" on-tap="_showLoginPage">Login</paper-button>
+                        <paper-button class="link-btn primary" on-tap="_showLoginPage">Login</paper-button>
                     </div>
                 </div>
 
@@ -164,16 +171,17 @@ Signup component is used to represent authentication methods to the user and pro
 
             <appsco-forgot-password
                     name="appsco-forgot-password"
-                    class="login-page">
+                    class="login-page"
+                    locale="[[ locale ]]">
 
                 <div header>
                     Enter your email address and we'll send you a mail message with password reset link.
                 </div>
 
                 <div footer>
-                    <div class="text-center mt-50">
+                    <div class="text-center mt-30">
                         Back to
-                        <paper-button class="link primary" on-tap="_showLoginPage">Login</paper-button>
+                        <paper-button class="link-btn primary" on-tap="_showLoginPage">Login</paper-button>
                     </div>
                 </div>
 
@@ -181,7 +189,8 @@ Signup component is used to represent authentication methods to the user and pro
 
             <appsco-reset-password
                     name="appsco-reset-password"
-                    class="login-page">
+                    class="login-page"
+                    locale="[[ locale ]]">
 
                 <div header>
                     Enter your new password.
@@ -240,9 +249,16 @@ Signup component is used to represent authentication methods to the user and pro
                 },
 
                 /**
-                 * Selected account.
+                 * Selected account from local storage within appsco-login-accounts component.
                  */
                 _selectedAccount: {
+                    type: Object
+                },
+
+                /**
+                 * appsco-login-form page animation.
+                 */
+                _loginFormAnimation: {
                     type: Object
                 }
             },
@@ -315,12 +331,51 @@ Signup component is used to represent authentication methods to the user and pro
             },
 
             /**
-             * It sets selected page to Appsco Forgot Password.
+             * Sets selected page to Appsco Forgot Password.
+             * Also, it sets appsco-login-form animation to its default if it is changed.
              *
              * @private
              */
             _showForgotPasswordForm: function() {
+
+                if (this._loginFormAnimation) {
+                    this.$.appscoLoginForm.setAnimationConfig(this._loginFormAnimation);
+                }
+
                 this._selected = 'appsco-forgot-password';
+            },
+
+            /**
+             * Changes animation for appsco-login-form
+             * when user comes from appsco-login-accounts page.
+             * It stores previous animationConfig so it can be reused again.
+             *
+             * @private
+             */
+            _adjustLoginFormAnimation: function() {
+
+                if (!this._loginFormAnimation) {
+                    this._loginFormAnimation = this.$.appscoLoginForm.getAnimationConfig();
+                }
+
+                var temporaryAnimation = {
+                    'entry': {
+                        name: 'slide-from-right-animation',
+                        node: this.$.appscoLoginForm,
+                        timing: {
+                            duration: 200
+                        }
+                    },
+                    'exit': {
+                        name: 'slide-right-animation',
+                        node: this.$.appscoLoginForm,
+                        timing: {
+                            duration: 300
+                        }
+                    }
+                };
+
+                this.$.appscoLoginForm.setAnimationConfig(temporaryAnimation);
             },
 
             /**
@@ -329,8 +384,11 @@ Signup component is used to represent authentication methods to the user and pro
              *
              * @private
              */
-            _onAddAccount: function() {
+            _onAddAccount: function(event) {
                 this._accountsExist = true;
+
+                this._adjustLoginFormAnimation();
+
                 this._showLoginForm();
             },
 

@@ -37,16 +37,12 @@ Example:
         <style include="iron-flex iron-flex-alignment">
             :host {
                 display: block;
-                max-width: 400px;
                 color: var(--primary-text-color);
 
                 @apply(--appsco-signup-form);
             }
-            :host paper-button {
+            :host form paper-button {
                 margin-top: 20px;
-            }
-            :host paper-card .card-actions {
-                border: none;
             }
         </style>
 
@@ -70,7 +66,7 @@ Example:
 
                     <gold-email-input
                             id="usernameInput"
-                            name="username"
+                            name="register[email]"
                             label="email"
                             error-message="Please type correct email address."
                             required
@@ -80,22 +76,21 @@ Example:
 
                     <paper-input
                             type="password"
-                            name="password"
+                            name="register[password]"
                             label="password"
-                            required>
+                            required
+                            on-change="_validateInput">
                     </paper-input>
 
                     <paper-button
                             type="submit"
-                            on-tap="_onFormSubmit"
-                            raised>
+                            on-tap="_onFormSubmit">
                         Signup
                     </paper-button>
                 </form>
-            </div>
 
-            <div class="card-actions">
                 <content select="[ footer ]"></content>
+
             </div>
         </paper-card>
 
@@ -113,6 +108,14 @@ Example:
             is: 'appsco-signup-form',
 
             properties: {
+
+                /**
+                 * Locale
+                 */
+                locale: {
+                    type: String,
+                    value: 'en'
+                },
 
                 /**
                  * Error message for signup form.

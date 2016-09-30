@@ -22,7 +22,7 @@ Example:
 
  Custom property | Description | Default
 ----------------|-------------|----------
-`--primary-color` | Used for button background color | `Based on Polymer's default theme --primary-color`
+`--primary-color` | Used for button background color | `Based on Polymer default theme --primary-color`
 `--danger-color` | Used for remove button background color | `#ff0000`
 `--appsco-login-accounts` | Mixin applied to root element | `{}`
 
@@ -34,7 +34,6 @@ Example:
         <style include="iron-flex iron-flex-alignment">
             :host {
                 display: block;
-                max-width: 400px;
                 color: var(--primary-text-color);
 
                 @apply(--appsco-login-accounts);
@@ -53,7 +52,7 @@ Example:
 
             }
             :host .btn-danger {
-                background-color: var(--danger-color, #ff0000);
+                background-color: var(--error-color, #ff0000);
             }
             :host paper-button[toggles][active] {
                 @apply(--shadow-elevation-4dp);
@@ -107,6 +106,7 @@ Example:
                 </div>
 
                 <content select="[ footer ]"></content>
+
             </div>
 
         </paper-card>

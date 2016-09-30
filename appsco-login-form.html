@@ -42,17 +42,13 @@ Example:
         <style include="iron-flex iron-flex-alignment">
             :host {
                 display: block;
-                max-width: 400px;
                 color: var(--primary-text-color);
 
                 --paper-checkbox-size: 14px;
 
                 @apply(--appsco-login-form);
             }
-            :host paper-card .card-actions {
-                border: none;
-            }
-            :host paper-button {
+            :host form paper-button {
                 margin-top: 20px;
             }
             :host appsco-oauth {
@@ -87,7 +83,7 @@ Example:
 
                     <gold-email-input
                             id="usernameInput"
-                            name="username"
+                            name="_username"
                             label="email"
                             error-message="Please type correct email address."
                             required
@@ -97,10 +93,11 @@ Example:
 
                     <paper-input
                             type="password"
-                            name="password"
+                            name="_password"
                             id="password"
                             label="password"
-                            required>
+                            required
+                            >
                     </paper-input>
 
                     <div class="remember-me-section layout horizontal">
@@ -130,10 +127,8 @@ Example:
                         providers="[[ providers ]]">
                 </appsco-oauth>
 
-            </div>
-
-            <div class="card-actions">
                 <content select="[ footer ]"></content>
+
             </div>
         </paper-card>
 
@@ -157,6 +152,14 @@ Example:
             is: 'appsco-login-form',
 
             properties: {
+
+                /**
+                 * Locale
+                 */
+                locale: {
+                    type: String,
+                    value: 'en'
+                },
 
                 /**
                  * Error message for login form.
@@ -407,6 +410,22 @@ Example:
             resetPage: function() {
                 this.$.appscoLoginForm.reset();
                 this._error = '';
+            },
+
+            /**
+             * Returns animationConfig property.
+             */
+            getAnimationConfig: function() {
+                return this.animationConfig;
+            },
+
+            /**
+             * Sets animationConfig property.
+             *
+             * @param {Object} config
+             */
+            setAnimationConfig: function(config) {
+                this.animationConfig = config;
             }
         });
     </script>

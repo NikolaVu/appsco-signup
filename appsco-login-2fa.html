@@ -1,6 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../paper-styles/paper-styles.html">
 
 <link rel="import" href="../iron-form/iron-form.html">
 <link rel="import" href="../paper-card/paper-card.html">
@@ -37,16 +36,12 @@ Example:
         <style include="iron-flex iron-flex-alignment">
             :host {
                 display: block;
-                max-width: 400px;
                 color: var(--primary-text-color);
 
                 @apply(--appsco-login-2fa);
             }
-            :host paper-button {
+            :host form paper-button {
                 margin-top: 20px;
-            }
-            :host paper-card .card-actions {
-                border: none;
             }
         </style>
 
@@ -71,7 +66,7 @@ Example:
                     <paper-input
                             id="authCodeInput"
                             type="text"
-                            name="auth-code"
+                            name="_auth_code"
                             label="authentication code"
                             pattern="[0-9]*"
                             error-message="Authentication code can contain numbers only."
@@ -80,15 +75,13 @@ Example:
 
                     <paper-button
                             type="submit"
-                            on-tap="_onFormSubmit"
-                            raised>
+                            on-tap="_onFormSubmit">
                         Login
                     </paper-button>
                 </form>
-            </div>
 
-            <div class="card-actions">
                 <content select="[ footer ]"></content>
+
             </div>
         </paper-card>
 
@@ -106,6 +99,14 @@ Example:
             is: 'appsco-login-2fa',
 
             properties: {
+
+                /**
+                 * Locale
+                 */
+                locale: {
+                    type: String,
+                    value: 'en'
+                },
 
                 /**
                  * Error message for 2fa form.

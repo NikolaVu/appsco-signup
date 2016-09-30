@@ -1,6 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../paper-styles/paper-styles.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
 
 <!--
@@ -52,7 +51,7 @@ Example:
                 @apply(--appsco-account);
             }
             :host .account:hover {
-                background-color: var(--divider-color);
+                background-color: var(--hover-background-color);
             }
             :host .account-img {
                 width: 48px;
@@ -82,15 +81,12 @@ Example:
                 display: block;
                 width: 95%;
             }
-            :host[_name] .account .info-additional {
-                margin-top: 0;
-                height: auto;
-            }
             :host[_name] .account .account-info {
-                margin-top: 6px;
+                margin-top: 8px;
             }
             :host[_name] .account .info-additional {
                 margin-top: 4px;
+                height: auto;
                 line-height: 1.2;
             }
             :host .account iron-icon {
