@@ -23,7 +23,7 @@ Example:
  Custom property | Description | Default
 ----------------|-------------|----------
 `--primary-color` | Used for button background color | `Based on Polymer default theme --primary-color`
-`--danger-color` | Used for remove button background color | `#ff0000`
+`--error-color` | Used for remove button background color | `#ff0000`
 `--appsco-login-accounts` | Mixin applied to root element | `{}`
 
 @demo demo/appsco-login-accounts.html
@@ -34,7 +34,6 @@ Example:
         <style include="iron-flex iron-flex-alignment">
             :host {
                 display: block;
-                color: var(--primary-text-color);
 
                 @apply(--appsco-login-accounts);
             }

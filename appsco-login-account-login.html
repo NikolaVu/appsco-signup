@@ -9,8 +9,8 @@
 <link rel="import" href="../neon-animation/animations/slide-right-animation.html">
 <link rel="import" href="../iron-a11y-keys/iron-a11y-keys.html">
 
-<link rel="import" href="appsco-form-error.html">
-<link rel="import" href="../appsco-header/appsco-loader.html">
+<link rel="import" href="../appsco-components/appsco-form-error.html">
+<link rel="import" href="../appsco-components/appsco-loader.html">
 
 <!--
 `appsco-login-account-login`
@@ -31,7 +31,6 @@ Appsco account login component
         <style include="iron-flex iron-flex-alignment">
             :host {
                 display: block;
-                color: var(--primary-text-color);
 
                 @apply(--appsco-login-account-login);
             }
@@ -68,6 +67,8 @@ Appsco account login component
             }
         </style>
 
+        <appsco-loader active="[[ _loader ]]" loader-alt="Appsco is signing you in" multi-color></appsco-loader>
+
         <paper-card heading="Account login" class="layout vertical">
             <div class="card-content layout vertical">
 
@@ -91,9 +92,7 @@ Appsco account login component
 
                 </div>
 
-                <appsco-loader active="[[ _loader ]]" loader-alt="Appsco is signing you in" multi-color></appsco-loader>
-
-                <form-error message="[[ _error ]]"></form-error>
+                <appsco-form-error message="[[ _error ]]"></appsco-form-error>
 
                 <form is="iron-form"
                       method="post"
@@ -335,7 +334,6 @@ Appsco account login component
              */
             _onFormError: function(event) {
                 this._error = event.detail.error.message;
-
                 this._loader = false;
             },
 
