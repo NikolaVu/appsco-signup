@@ -73,7 +73,7 @@ Example:
 
                 <form is="iron-form"
                       method="post"
-                      action="/login"
+                      action="/login_check"
                       id="appscoLoginForm"
                       on-input="_onInputChange"
                       on-iron-form-presubmit="_onFormPresubmit"
@@ -288,11 +288,11 @@ Example:
              * @private
              */
             _onFormPresubmit: function(event) {
-                var form = event.target,
-                    basic = btoa(form.request.params.username+":"+form.request.params.password);
-
-//                event.target.headers.authorization = "token 4mp22mlvwv8kk00804owskwko08o8kcw0ocgoc80cksss4cg0c4n636060eu4g0sckkwsscock0848gk44ws4oowwgowkcscckgs";
-                event.target.headers.authorization = "Basic " + basic;
+//                var form = event.target,
+//                    basic = btoa(form.request.params.username+":"+form.request.params.password);
+//
+////                event.target.headers.authorization = "token 4mp22mlvwv8kk00804owskwko08o8kcw0ocgoc80cksss4cg0c4n636060eu4g0sckkwsscock0848gk44ws4oowwgowkcscckgs";
+//                event.target.headers.authorization = "Basic " + basic;
 
                 this._loader = true;
             },
@@ -315,7 +315,7 @@ Example:
             _onFormError: function(event) {
                 this._error = event.detail.error.message;
 
-                this._saveAccountToLocalStorage(event.detail.response);
+//                this._saveAccountToLocalStorage(event.detail.response);
 
                 this._loader = false;
             },
@@ -326,12 +326,11 @@ Example:
              * @private
              */
             _onFormResponse: function(event) {
-                console.log('Response: ', event.detail.response);
-
                 // If response should contain account logged in.
 //                this._saveAccountToLocalStorage(event.detail.response.account);
 
-                this._loader = false;
+//                this._loader = false;
+                window.location.href = "/";
             },
 
             /**
