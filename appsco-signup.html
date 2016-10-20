@@ -43,13 +43,13 @@ Signup component is used to represent authentication methods to the user and pro
             }
             :host appsco-brand {
                 --appsco-brand: {
-                     width: 64px;
-                     margin: 0 auto 40px;
-                     display: block;
-                 };
+                    width: 64px;
+                    margin: 0 auto 40px;
+                    display: block;
+                };
                 --appsco-brand-logo: {
-                     margin-right: 0;
-                 };
+                    margin-right: 0;
+                };
             }
         </style>
 
@@ -73,6 +73,7 @@ Signup component is used to represent authentication methods to the user and pro
                     name="appsco-login-form"
                     class="login-page"
                     locale="[[ locale ]]"
+                    providers="{{ oauthClients }}"
                     on-forgot-password="_showForgotPasswordForm"
                     on-iron-form-response="_onAppscoLoginFormResponse"
                     on-iron-form-error="_onAppscoLoginFormResponse">
@@ -226,6 +227,11 @@ Signup component is used to represent authentication methods to the user and pro
                 locale: {
                     type: String,
                     value: 'en'
+                },
+
+                oauthClients: {
+                    type: Array,
+                    value: function () { return []; }
                 },
 
                 /**

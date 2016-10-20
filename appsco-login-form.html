@@ -96,7 +96,7 @@ Example:
                             id="password"
                             label="password"
                             required
-                            >
+                    >
                     </paper-input>
 
                     <div class="remember-me-section layout horizontal">
@@ -188,16 +188,7 @@ Example:
                  */
                 providers: {
                     type: Array,
-                    value: [
-                        {
-                            name: 'google',
-                            oauth_url: 'https://accounts.google.com/o/oauth2/auth?client_id=726001410240-mmndnim45nuh71e0thscn307ho329lhv.apps.googleusercontent.com&response_type=code&scope=https://www.googleapis.com/auth/plus.login+https://www.googleapis.com/auth/userinfo.email&redirect_uri=https://appsco.com/oauth/client/callback/google&state=ozfprkk0qio4484k088ck4ggogk884s'
-                        },
-                        {
-                            name: 'facebook',
-                            oauth_url: 'https://graph.facebook.com/oauth/authorize?client_id=1604779689796337&response_type=code&scope=public_profile email&redirect_uri=https://appsco.com/oauth/client/callback/facebook&state=mk4yxc207uo40w4oscg4cckw8g004sk'
-                        }
-                    ]
+                    value: function () { return []; }
                 },
 
                 /**
@@ -217,7 +208,7 @@ Example:
                         return this.$.appscoLoginForm
                     }
                 },
-                
+
                 /**
                  * Animation configuration for root element.
                  */
@@ -372,7 +363,7 @@ Example:
                     this.$.localStorageAccounts.reload();
 
                     var accounts = this._accounts,
-                        accountExists = false;
+                            accountExists = false;
 
                     if (accounts) {
 
