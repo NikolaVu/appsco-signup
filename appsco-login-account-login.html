@@ -34,8 +34,11 @@ Appsco account login component
 
                 @apply(--appsco-login-account-login);
             }
+            :host appsco-loader {
+                @apply(--form-appsco-loader);
+            }
             :host form paper-button {
-                margin-top: 20px;
+                @apply(--form-paper-button);
             }
             :host .account {
                 padding: 10px 0 0 0;
