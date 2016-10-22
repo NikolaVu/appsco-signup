@@ -34,11 +34,16 @@ Example:
         <style include="iron-flex iron-flex-alignment">
             :host {
                 display: block;
+                overflow: hidden;
 
                 @apply(--appsco-login-accounts);
             }
             :host .card-content-no-padding {
                 padding: 0;
+            }
+            .accounts {
+                max-height: 280px;
+                overflow-y: auto;
             }
             :host paper-button {
                 margin-left: 0;
@@ -68,16 +73,20 @@ Example:
             </div>
 
             <div class="card-content card-content-no-padding layout vertical">
-                <template is="dom-repeat" items="{{ _accounts }}">
 
-                    <appsco-login-account
-                            id$="{{ _setLoginAccountId(index) }}"
-                            account="{{ item }}"
-                            remove-account="[[ _removeAccount ]]"
-                            on-account-selected="_onAccountSelected">
-                    </appsco-login-account>
+                <div class="accounts">
+                    <template is="dom-repeat" items="{{ _accounts }}">
 
-                </template>
+                        <appsco-login-account
+                                id$="{{ _setLoginAccountId(index) }}"
+                                account="{{ item }}"
+                                remove-account="[[ _removeAccount ]]"
+                                on-account-selected="_onAccountSelected">
+                        </appsco-login-account>
+
+                    </template>
+                </div>
+
             </div>
 
             <template is="dom-if" if="[[ _emptyAccounts ]]">
