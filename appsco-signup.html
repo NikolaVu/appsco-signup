@@ -26,7 +26,9 @@ Signup component is used to represent authentication methods to the user and pro
             :host {
                 display: block;
                 max-width: 400px;
-                height: calc(100vh - 48px);
+
+                /* Height is calculated related to body padding and margin. my-dev.appsco.com has body margin set to 8px. */
+                height: calc(100vh - 16px);
                 margin: auto;
                 color: var(--primary-text-color);
                 @apply(--layout-horizontal);
